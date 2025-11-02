@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkMax
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode
 import com.revrobotics.spark.config.SparkMaxConfig
 import com.studica.frc.AHRS
+import dev.doglog.DogLog
 import edu.wpi.first.math.MatBuilder
 import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
@@ -21,6 +22,8 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Constants
 import frc.robot.subsystems.mecanum.MecanumConstants
+import edu.wpi.first.epilogue.Logged
+
 
 /**
  * @param frontLeftMotor the front left motor
@@ -37,6 +40,10 @@ import frc.robot.subsystems.mecanum.MecanumConstants
  * @param controller the PIDController for the robot
  */
 open class MecanumDrive(
+    private val frontLeftMotor: SparkMax,
+    private val frontRightMotor: SparkMax,
+    private val backLeftMotor: SparkMax,
+    private val backRightMotor: SparkMax,
     private val ahrs: AHRS,
     frontLeftLocation: Translation2d,
     frontRightLocation: Translation2d,
@@ -48,10 +55,6 @@ open class MecanumDrive(
     private val controller: () -> PIDController,
 ) : SubsystemBase() {
 
-    private val frontLeftMotor = SparkMax(MecanumConstants.DRIVE_MOTOR_FL,SparkLowLevel.MotorType.kBrushless)
-    private val frontRightMotor= SparkMax(MecanumConstants.DRIVE_MOTOR_FR,SparkLowLevel.MotorType.kBrushless)
-    private val backLeftMotor= SparkMax(MecanumConstants.DRIVE_MOTOR_BL,SparkLowLevel.MotorType.kBrushless)
-    private val backRightMotor= SparkMax(MecanumConstants.DRIVE_MOTOR_BR,SparkLowLevel.MotorType.kBrushless)
     var configL = SparkMaxConfig()
     var configR = SparkMaxConfig()
 
@@ -96,12 +99,8 @@ open class MecanumDrive(
     )
 
      var pose: Pose2d
-        get() {
-            return this.poseEstimator.estimatedPosition
-        }
-        set(value) {
-            this.poseEstimator.resetPosition(ahrs.rotation2d, getPositions(), value)
-        }
+        get() { return this.poseEstimator.estimatedPosition }
+        set(value) { this.poseEstimator.resetPosition(ahrs.rotation2d, getPositions(), value) }
 
     private var desiredWheelSpeeds = MecanumDriveWheelSpeeds()
 
@@ -111,42 +110,48 @@ open class MecanumDrive(
     }
 
      fun stop() {
-        this.set(ChassisSpeeds(0.0, 0.0, 0.0))
+         this.set(ChassisSpeeds(0.0, 0.0, 0.0)) }
+
+    private fun logData() {
+        DogLog.log("FrontLeft/velocity", frontLeftMotor.encoder.velocity)
+        DogLog.log("FrontLeft/position", frontLeftMotor.encoder.position)
+        DogLog.log("FrontRight/velocity", frontRightMotor.encoder.velocity)
+        DogLog.log("FrontRight/position", frontRightMotor.encoder.position)
+        DogLog.log("BackLeft/velocity", backLeftMotor.encoder.velocity)
+        DogLog.log("BackLeft/position", backLeftMotor.encoder.position)
+        DogLog.log("BackRight/velocity", backRightMotor.encoder.velocity)
+        DogLog.log("BackRight/position", backRightMotor.encoder.position)
+
+        DogLog.log("FR", frontRightMotor.appliedOutput)
+        DogLog.log("BL", backLeftMotor.appliedOutput)
+        DogLog.log("BR", backRightMotor.appliedOutput)
+        DogLog.log("FL", frontLeftMotor.appliedOutput)
+
+        DogLog.log("desiredSpeed", desiredWheelSpeeds)
+        DogLog.log("pose2d", pose)
+        DogLog.log("ahrs", ahrs.rotation2d)
     }
 
-
     override fun periodic() {
+        logData()
         val currTime = Timer.getFPGATimestamp()
 
-        val frontLeftPID = flController.calculate(frontLeftMotor.encoder.velocity , desiredWheelSpeeds.frontLeftMetersPerSecond)
+        val frontLeftPID = flController.calculate(frontLeftMotor.encoder.velocity, desiredWheelSpeeds.frontLeftMetersPerSecond)
         val frontRightPID = frController.calculate(frontRightMotor.encoder.velocity, desiredWheelSpeeds.frontRightMetersPerSecond)
         val backLeftPID = blController.calculate(backLeftMotor.encoder.velocity, desiredWheelSpeeds.rearLeftMetersPerSecond)
         val backRightPID = brController.calculate(backRightMotor.encoder.velocity, desiredWheelSpeeds.rearRightMetersPerSecond)
 
-        val frontLeftFF = feedForward.calculate(
-            desiredWheelSpeeds.frontLeftMetersPerSecond
-        )
-        val frontRightFF = feedForward.calculate(
-            desiredWheelSpeeds.frontRightMetersPerSecond
-        )
-        val backLeftFF = feedForward.calculate(
-            desiredWheelSpeeds.rearLeftMetersPerSecond
-        )
-        val backRightFF = feedForward.calculate(
-            desiredWheelSpeeds.rearRightMetersPerSecond
-        )
+        val frontLeftFF = feedForward.calculate(desiredWheelSpeeds.frontLeftMetersPerSecond)
+        val frontRightFF = feedForward.calculate(desiredWheelSpeeds.frontRightMetersPerSecond)
+        val backLeftFF = feedForward.calculate(desiredWheelSpeeds.rearLeftMetersPerSecond)
+        val backRightFF = feedForward.calculate(desiredWheelSpeeds.rearRightMetersPerSecond)
 
         frontLeftMotor.setVoltage(frontLeftPID + frontLeftFF)
         frontRightMotor.setVoltage(frontRightPID + frontRightFF)
         backLeftMotor.setVoltage(backLeftPID + backLeftFF)
         backRightMotor.setVoltage(backRightPID + backRightFF)
 
-
-        this.poseEstimator.update(
-            ahrs.rotation2d,
-            getPositions()
-        )
-
+        this.poseEstimator.update(ahrs.rotation2d, getPositions())
         lastTime = currTime
     }
 
@@ -177,6 +182,10 @@ open class MecanumDrive(
         /** Create a new Mecanum Drive from DriveConstants */
         fun createMecanum(ahrs: AHRS): MecanumDrive {
             return MecanumDrive(
+                frontLeftMotor = SparkMax(MecanumConstants.DRIVE_MOTOR_FL,SparkLowLevel.MotorType.kBrushless) ,
+                frontRightMotor = SparkMax(MecanumConstants.DRIVE_MOTOR_FR,SparkLowLevel.MotorType.kBrushless),
+                backLeftMotor = SparkMax(MecanumConstants.DRIVE_MOTOR_BL,SparkLowLevel.MotorType.kBrushless),
+                backRightMotor = SparkMax(MecanumConstants.DRIVE_MOTOR_BR,SparkLowLevel.MotorType.kBrushless),
                 ahrs,
                 Translation2d(MecanumConstants.WHEELBASE / 2, MecanumConstants.TRACKWIDTH / 2),
                 Translation2d(MecanumConstants.WHEELBASE / 2, -MecanumConstants.TRACKWIDTH / 2),

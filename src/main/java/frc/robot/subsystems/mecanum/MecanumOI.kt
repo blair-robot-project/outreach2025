@@ -129,9 +129,12 @@ class MecanumOI(
         fun createMecanumOI(drive: MecanumDrive, driveController: XboxController): MecanumOI {
             return MecanumOI(
                 drive,
-                { if (abs(driveController.leftY) < Constants.RobotConstants.TRANSLATION_DEADBAND) .0 else driveController.leftY },
-                { if (abs(driveController.leftX) < Constants.RobotConstants.TRANSLATION_DEADBAND) .0 else driveController.leftX },
-                { if (abs(driveController.getRawAxis(4)) < Constants.RobotConstants.ROTATION_DEADBAND) .0 else -driveController.getRawAxis(4) },
+                { if (abs(driveController.leftY) < Constants.RobotConstants.TRANSLATION_DEADBAND)
+                    .0 else driveController.leftY },
+                { if (abs(driveController.leftX) < Constants.RobotConstants.TRANSLATION_DEADBAND)
+                    .0 else driveController.leftX },
+                { if (abs(driveController.getRawAxis(4)) < Constants.RobotConstants.ROTATION_DEADBAND)
+                    .0 else -driveController.getRawAxis(4) },
                 SlewRateLimiter(Constants.RobotConstants.RATE_LIMIT),
                 Constants.RobotConstants.MAX_ACCEL,
                 { true }

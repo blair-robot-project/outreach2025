@@ -16,16 +16,16 @@ object MecanumConstants {
     const val DRIVE_KA = 0.29862
 
     /** PID gains for driving each module*/
-    const val DRIVE_KP = 0.35
+    const val DRIVE_KP = 0.1//0.35
     const val DRIVE_KI = 0.0
     const val DRIVE_KD = 0.0
 
     /** Drive configuration */
     const val DRIVE_GEARING = 1 / 8.0
     val DRIVE_UPR = Math.PI * Units.inchesToMeters(6.0)
-    const val MAX_ATTAINABLE_WHEEL_SPEED = (12 - DRIVE_KS) / DRIVE_KV
+    const val MAX_ATTAINABLE_WHEEL_SPEED = 1.0 //(12 - DRIVE_KS) / DRIVE_KV
     val WHEELBASE = Units.inchesToMeters(21.426)
     val TRACKWIDTH = Units.inchesToMeters(21.000)
-    const val CURRENT_LIM = 50
+    const val CURRENT_LIM = 20 //50
 
 }

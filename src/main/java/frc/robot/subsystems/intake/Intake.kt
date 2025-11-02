@@ -7,11 +7,14 @@ import com.revrobotics.spark.SparkMax
 import com.revrobotics.spark.config.SparkBaseConfig
 import com.revrobotics.spark.config.SparkMaxConfig
 import com.revrobotics.spark.config.SparkMaxConfigAccessor
+import dev.doglog.DogLog
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax
 import edu.wpi.first.wpilibj.motorcontrol.Spark
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+
+
 
 class Intake() : SubsystemBase() {
     val motor = SparkMax(IntakeConstants.INTAKE_ID, MotorType.kBrushless)
@@ -47,5 +50,12 @@ class Intake() : SubsystemBase() {
     }
 
 
+    override fun periodic() {
+        logData()
+    }
+
+    private fun logData() {
+        DogLog.log("Intake Motor", motor.appliedOutput )
+    }
 
 }

@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkLowLevel
 import com.revrobotics.spark.SparkMax
 import com.revrobotics.spark.config.SparkBaseConfig
 import com.revrobotics.spark.config.SparkMaxConfig
+import dev.doglog.DogLog
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 
@@ -37,4 +38,14 @@ class Shooter(): SubsystemBase() {
             motor.stopMotor()
         }
     }
+
+    override fun periodic() {
+        logData()
+    }
+
+    private fun logData(){
+        DogLog.log("Shooter motor", motor.appliedOutput)
+    }
+
+
 }

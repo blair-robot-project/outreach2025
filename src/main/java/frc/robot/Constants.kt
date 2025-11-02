@@ -40,9 +40,9 @@ object Constants
         const val ROBOT_WEIGHT = 55.0
 
         /** Drive configuration */
-        const val MAX_LINEAR_SPEED = 1.5
-        const val MAX_ROT_SPEED = PI / 2 // rad/s
-        val MAX_ACCEL = 15.0
+        const val MAX_LINEAR_SPEED = 0.5//1.5
+        const val MAX_ROT_SPEED = 0.5 //PI / 2 // rad/s
+        val MAX_ACCEL = 1.0 //15.0
 
         val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0))
 
