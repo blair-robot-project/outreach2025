@@ -1,4 +1,4 @@
-
+import edu.wpi.first.gradlerio.GradleRIOPlugin
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -6,17 +6,19 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "2.1.0"
     id "edu.wpi.first.GradleRIO" version "2025.3.2"
     id "idea"
+    id "org.jlleitschuh.gradle.ktlint" version "11.6.1"
+
 }
 
 def javaVersion = JavaVersion.VERSION_17
-def kotlinJvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.@Companion.fromTarget(javaVersion.toString())
+def kotlinJvmTarget = JvmTarget.@Companion.fromTarget(javaVersion.toString())
 
 java {
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
 }
 
-def ROBOT_MAIN_CLASS = "frc.robot.Main"
+def ROBOT_MAIN_CLASS = "frc.team449.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
@@ -62,13 +64,14 @@ dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
+    implementation 'com.github.shueja:Monologue:v1.0.0-beta4'
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
 
     roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
     roborioRelease wpi.java.vendor.jniRelease(wpi.platforms.roborio)
-    
+
     nativeDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
     nativeDebug wpi.java.vendor.jniDebug(wpi.platforms.desktop)
     simulationDebug wpi.sim.enableDebug()
@@ -89,7 +92,7 @@ wpi.sim.addDriverstation()
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     from sourceSets.main.allSource
-    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+    manifest GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
@@ -98,9 +101,20 @@ deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     // Configure string concat to always inline compile
     options.compilerArgs.add '-XDstringConcat=inline'
+}
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+
+tasks.register('ktlint', JavaExec) {
+    description = "Check Kotlin code style."
+    classpath = configurations.ktlint
+    mainClass = 'com.pinterest.ktlint.Main'
+    args '*/src/**/*.kt', '--baseline=ktlint-baseline.xml'
 }
 
 kotlin {
