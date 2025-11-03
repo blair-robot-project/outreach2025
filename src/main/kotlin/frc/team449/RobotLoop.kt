@@ -10,10 +10,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import edu.wpi.first.wpilibj2.command.InstantCommand
-import frc.team449.outreach2025.commands.light.BlairChasing
-import frc.team449.outreach2025.commands.light.BreatheHue
-import frc.team449.outreach2025.commands.light.Crazy
-import frc.team449.outreach2025.commands.light.Rainbow
+import frc.team449.leds.BlairChasing
+import frc.team449.leds.BreatheHue
+import frc.team449.leds.Crazy
+import frc.team449.leds.Rainbow
 import monologue.Annotations.Log
 import monologue.Logged
 import monologue.Monologue

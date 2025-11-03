@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
-import frc.team449.outreach2025.constants.RobotConstants
 import kotlin.math.PI
 
 class ControllerBindings(

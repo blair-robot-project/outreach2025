@@ -3,14 +3,13 @@ package frc.team449
 import com.studica.frc.AHRS
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
-import frc.team449.drive.mecanum.MecanumDrive
-import frc.team449.drive.mecanum.MecanumDriveCommand
-import frc.team449.drive.mecanum.MecanumOI.Companion.createMecanumOI
-import frc.team449.outreach2025.constants.RobotConstants
-import frc.team449.outreach2025.subsystems.indexer.Indexer
-import frc.team449.outreach2025.subsystems.intake.Intake
-import frc.team449.outreach2025.subsystems.light.Light
-import frc.team449.outreach2025.subsystems.shooter.Shooter
+import frc.team449.leds.light.Light
+import frc.team449.subsystems.drive.mecanum.MecanumDrive
+import frc.team449.subsystems.drive.mecanum.MecanumDriveCommand
+import frc.team449.subsystems.drive.mecanum.MecanumOI.Companion.createMecanumOI
+import frc.team449.subsystems.indexer.Indexer
+import frc.team449.subsystems.intake.Intake
+import frc.team449.subsystems.shooter.Shooter
 import monologue.Annotations.Log
 import monologue.Logged
 
