@@ -33,7 +33,7 @@ class ControllerBindings(
 
     fun bindButtons() {
         evergreenBindings()
-        driveController.y().onTrue(robot.shooter.runShooter()).onFalse(robot.shooter.stopShooter())
+        driveController.y().onTrue(robot.shooter.runShooter().alongWith(robot.indexer.runIndexer())).onFalse(robot.shooter.stopShooter())
         driveController.x().onTrue(robot.intake.runIntake()).onFalse(robot.intake.stopIntake())
     }
 }

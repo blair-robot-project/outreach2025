@@ -14,7 +14,7 @@ class Intake : SubsystemBase() {
 
     init {
         config.smartCurrentLimit(IntakeConstants.CURRENT_LIMIT)
-        config.inverted(true)
+        config.inverted(false)
         config.idleMode(SparkBaseConfig.IdleMode.kCoast)
         motor.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters)
     }
