@@ -10,12 +10,12 @@ object MecanumConstants {
     const val DRIVE_MOTOR_BR = 4
 
     /** Feed forward values for driving each module */
-    const val DRIVE_KS = 0.16475
-    const val DRIVE_KV = 2.0909
-    const val DRIVE_KA = 0.29862
+    const val DRIVE_KS = 0.0 // 0.16475
+    const val DRIVE_KV = 0.0 // 2.0909
+    const val DRIVE_KA = 0.0 // 0.29862
 
     /** PID gains for driving each module*/
-    const val DRIVE_KP = 0.35
+    const val DRIVE_KP = 0.08//0.35
     const val DRIVE_KI = 0.0
     const val DRIVE_KD = 0.0
 

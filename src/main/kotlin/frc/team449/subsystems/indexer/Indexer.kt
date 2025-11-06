@@ -13,7 +13,7 @@ class Indexer : SubsystemBase() {
 
     init {
         config.smartCurrentLimit(IndexerConstants.CURRENT_LIMIT)
-        config.inverted(false)
+        config.inverted(true)
         config.idleMode(SparkBaseConfig.IdleMode.kCoast)
         motor.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters)
     }
