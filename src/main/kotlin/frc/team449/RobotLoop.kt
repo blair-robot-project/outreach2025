@@ -1,7 +1,10 @@
 package frc.team449
 
+import edu.wpi.first.epilogue.Epilogue
+import edu.wpi.first.epilogue.Logged
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.wpilibj.DataLogManager
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
@@ -14,20 +17,14 @@ import frc.team449.leds.BlairChasing
 import frc.team449.leds.BreatheHue
 import frc.team449.leds.Crazy
 import frc.team449.leds.Rainbow
-import monologue.Annotations.Log
-import monologue.Logged
-import monologue.Monologue
 import org.littletonrobotics.urcl.URCL
 import kotlin.jvm.optionals.getOrNull
 
 /** The main class of the robot, constructs all the subsystems and initializes default commands. */
-class RobotLoop :
-    TimedRobot(),
-    Logged {
-    @Log.NT
+@Logged
+class RobotLoop : TimedRobot() {
     private val robot = Robot()
 
-    @Log.NT
     private val field = robot.field
 
     private var autoCommand: Command? = null
@@ -53,11 +50,12 @@ class RobotLoop :
 
         controllerBinder.bindButtons()
 
-        Monologue.setupMonologue(this, "/Monologuing", false, false)
-
         if (RobotBase.isReal()) {
             URCL.start()
         }
+
+        DataLogManager.start()
+        Epilogue.bind(this)
     }
 
     override fun robotPeriodic() {
@@ -67,8 +65,6 @@ class RobotLoop :
 
         robot.field.getObject("bumpers").pose = robot.drive.pose
 
-        Monologue.setFileOnly(DriverStation.isFMSAttached())
-        Monologue.updateAll()
     }
 
     override fun autonomousInit() {

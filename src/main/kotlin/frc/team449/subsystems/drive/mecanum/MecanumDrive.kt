@@ -1,6 +1,8 @@
 package frc.team449.subsystems.drive.mecanum
 
+import com.revrobotics.spark.SparkMax
 import com.studica.frc.AHRS
+import edu.wpi.first.epilogue.Logged
 import edu.wpi.first.math.MatBuilder
 import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
@@ -17,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.RobotConstants
 import frc.team449.subsystems.drive.HolonomicDrive
 import frc.team449.system.encoder.NEOEncoder
-import frc.team449.system.motor.WrappedMotor
 import frc.team449.system.motor.createSparkMax
 
 /**
@@ -34,11 +35,12 @@ import frc.team449.system.motor.createSparkMax
  * @param feedForward the SimpleMotorFeedforward for mecanum
  * @param controller the PIDController for the robot
  */
+@Logged
 open class MecanumDrive(
-    private val frontLeftMotor: WrappedMotor,
-    private val frontRightMotor: WrappedMotor,
-    private val backLeftMotor: WrappedMotor,
-    private val backRightMotor: WrappedMotor,
+    private val frontLeftMotor: SparkMax,
+    private val frontRightMotor: SparkMax,
+    private val backLeftMotor: SparkMax,
+    private val backRightMotor: SparkMax,
     frontLeftLocation: Translation2d,
     frontRightLocation: Translation2d,
     backLeftLocation: Translation2d,
@@ -97,24 +99,24 @@ open class MecanumDrive(
     override fun periodic() {
         val currTime = Timer.getFPGATimestamp()
 
-        val frontLeftPID = flController.calculate(frontLeftMotor.velocity, desiredWheelSpeeds.frontLeftMetersPerSecond)
+        val frontLeftPID = flController.calculate(frontLeftMotor.encoder.velocity, desiredWheelSpeeds.frontLeftMetersPerSecond)
         val frontRightPID =
             frController.calculate(
-                frontRightMotor.velocity,
+                frontRightMotor.encoder.velocity,
                 desiredWheelSpeeds.frontRightMetersPerSecond
             )
-        val backLeftPID = blController.calculate(backLeftMotor.velocity, desiredWheelSpeeds.rearLeftMetersPerSecond)
-        val backRightPID = brController.calculate(backRightMotor.velocity, desiredWheelSpeeds.rearRightMetersPerSecond)
+        val backLeftPID = blController.calculate(backLeftMotor.encoder.velocity, desiredWheelSpeeds.rearLeftMetersPerSecond)
+        val backRightPID = brController.calculate(backRightMotor.encoder.velocity, desiredWheelSpeeds.rearRightMetersPerSecond)
 
         val frontLeftFF = feedForward.calculate(desiredWheelSpeeds.frontLeftMetersPerSecond)
         val frontRightFF = feedForward.calculate(desiredWheelSpeeds.frontRightMetersPerSecond)
         val backLeftFF = feedForward.calculate(desiredWheelSpeeds.rearLeftMetersPerSecond)
         val backRightFF = feedForward.calculate(desiredWheelSpeeds.rearRightMetersPerSecond)
 
-        frontLeftMotor.setVoltage(frontLeftPID + frontLeftFF)
-        frontRightMotor.setVoltage(frontRightPID + frontRightFF)
-        backLeftMotor.setVoltage(backLeftPID + backLeftFF)
-        backRightMotor.setVoltage(backRightPID + backRightFF)
+        frontLeftMotor.setVoltage(frontLeftPID)
+        frontRightMotor.setVoltage(frontRightPID)
+        backLeftMotor.setVoltage(backLeftPID)
+        backRightMotor.setVoltage(backRightPID)
 
         this.poseEstimator.update(ahrs.rotation2d, getPositions())
         lastTime = currTime
@@ -125,10 +127,10 @@ open class MecanumDrive(
      */
     private fun getPositions(): MecanumDriveWheelPositions =
         MecanumDriveWheelPositions(
-            frontLeftMotor.position,
-            frontRightMotor.position,
-            backLeftMotor.position,
-            backRightMotor.position
+            frontLeftMotor.encoder.position,
+            frontRightMotor.encoder.position,
+            backLeftMotor.encoder.position,
+            backRightMotor.encoder.position
         )
 
     /**
@@ -136,37 +138,44 @@ open class MecanumDrive(
      */
     private fun getSpeeds(): MecanumDriveWheelSpeeds =
         MecanumDriveWheelSpeeds(
-            frontLeftMotor.velocity,
-            frontRightMotor.velocity,
-            backLeftMotor.velocity,
-            backRightMotor.velocity
+            frontLeftMotor.encoder.velocity,
+            frontRightMotor.encoder.velocity,
+            backLeftMotor.encoder.velocity,
+            backRightMotor.encoder.velocity
         )
 
     companion object {
-        /** Helper method to create a motor for each wheel */
-        private fun createCorner(
-            name: String,
-            motorID: Int,
-            inverted: Boolean
-        ): WrappedMotor =
-            createSparkMax(
-                name,
-                motorID,
-                NEOEncoder.creator(
-                    MecanumConstants.DRIVE_UPR,
-                    MecanumConstants.DRIVE_GEARING
-                ),
-                inverted = inverted,
-                currentLimit = MecanumConstants.CURRENT_LIM
-            )
-
         /** Create a new Mecanum Drive from DriveConstants */
         fun createMecanum(ahrs: AHRS): MecanumDrive =
             MecanumDrive(
-                createCorner("frontLeft", MecanumConstants.DRIVE_MOTOR_FL, false),
-                createCorner("frontRight", MecanumConstants.DRIVE_MOTOR_FR, true),
-                createCorner("backLeft", MecanumConstants.DRIVE_MOTOR_BL, false),
-                createCorner("backRight", MecanumConstants.DRIVE_MOTOR_BR, true),
+                createSparkMax(
+                    MecanumConstants.DRIVE_MOTOR_FL,
+                    false,
+                    gearing = MecanumConstants.DRIVE_GEARING,
+                    upr = MecanumConstants.DRIVE_UPR,
+                    currentLimit = MecanumConstants.CURRENT_LIM
+                ),
+                createSparkMax(
+                    MecanumConstants.DRIVE_MOTOR_FR,
+                    false,
+                    gearing = MecanumConstants.DRIVE_GEARING,
+                    upr = MecanumConstants.DRIVE_UPR,
+                    currentLimit = MecanumConstants.CURRENT_LIM
+                ),
+                createSparkMax(
+                    MecanumConstants.DRIVE_MOTOR_BL,
+                    false,
+                    gearing = MecanumConstants.DRIVE_GEARING,
+                    upr = MecanumConstants.DRIVE_UPR,
+                    currentLimit = MecanumConstants.CURRENT_LIM
+                ),
+                createSparkMax(
+                    MecanumConstants.DRIVE_MOTOR_BR,
+                    false,
+                    gearing = MecanumConstants.DRIVE_GEARING,
+                    upr = MecanumConstants.DRIVE_UPR,
+                    currentLimit = MecanumConstants.CURRENT_LIM
+                ),
                 Translation2d(MecanumConstants.WHEEL_BASE / 2, MecanumConstants.TRACK_WIDTH / 2),
                 Translation2d(MecanumConstants.WHEEL_BASE / 2, -MecanumConstants.TRACK_WIDTH / 2),
                 Translation2d(-MecanumConstants.WHEEL_BASE / 2, MecanumConstants.TRACK_WIDTH / 2),

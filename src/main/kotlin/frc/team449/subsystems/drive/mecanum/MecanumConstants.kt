@@ -1,6 +1,7 @@
 package frc.team449.subsystems.drive.mecanum
 
 import edu.wpi.first.math.util.Units
+import edu.wpi.first.units.Units.Amps
 
 object MecanumConstants {
     /** Drive motor ports */
@@ -25,5 +26,5 @@ object MecanumConstants {
     const val MAX_ATTAINABLE_WHEEL_SPEED = (12 - DRIVE_KS) / DRIVE_KV
     val WHEEL_BASE = Units.inchesToMeters(21.426)
     val TRACK_WIDTH = Units.inchesToMeters(21.000)
-    const val CURRENT_LIM = 50
+    val CURRENT_LIM = Amps.of(50.0)
 }
