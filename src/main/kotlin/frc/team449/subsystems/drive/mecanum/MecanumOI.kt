@@ -132,8 +132,8 @@ class MecanumOI(
         ): MecanumOI =
             MecanumOI(
                 drive,
-                { if (abs(driveController.leftY) < RobotConstants.TRANSLATION_DEADBAND) .0 else driveController.leftY },
-                { if (abs(driveController.leftX) < RobotConstants.TRANSLATION_DEADBAND) .0 else driveController.leftX },
+                { if (abs(driveController.leftY) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftY },
+                { if (abs(driveController.leftX) < RobotConstants.TRANSLATION_DEADBAND) .0 else -driveController.leftX },
                 {
                     if (abs(driveController.getRawAxis(4)) <
                         RobotConstants.ROTATION_DEADBAND
@@ -143,7 +143,7 @@ class MecanumOI(
                         -driveController.getRawAxis(4)
                     }
                 },
-                SlewRateLimiter(RobotConstants.RATE_LIMIT),
+                SlewRateLimiter(RobotConstants.ROT_RATE_LIMIT),
                 RobotConstants.MAX_ACCEL,
                 { true }
             )

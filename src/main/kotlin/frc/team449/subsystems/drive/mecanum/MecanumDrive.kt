@@ -87,6 +87,13 @@ open class MecanumDrive(
 
     private var desiredWheelSpeeds = MecanumDriveWheelSpeeds()
 
+    init {
+        frontLeftMotor.encoder.position = 0.0
+        frontRightMotor.encoder.position = 0.0
+        backLeftMotor.encoder.position = 0.0
+        backRightMotor.encoder.position = 0.0
+    }
+
     override fun set(desiredSpeeds: ChassisSpeeds) {
         desiredWheelSpeeds = kinematics.toWheelSpeeds(desiredSpeeds)
         desiredWheelSpeeds.desaturate(MecanumConstants.MAX_ATTAINABLE_WHEEL_SPEED)
@@ -99,24 +106,34 @@ open class MecanumDrive(
     override fun periodic() {
         val currTime = Timer.getFPGATimestamp()
 
-        val frontLeftPID = flController.calculate(frontLeftMotor.encoder.velocity, desiredWheelSpeeds.frontLeftMetersPerSecond)
+        val frontLeftPID =
+            flController.calculate(
+                frontLeftMotor.encoder.velocity,
+                desiredWheelSpeeds.frontLeftMetersPerSecond
+            )
         val frontRightPID =
             frController.calculate(
                 frontRightMotor.encoder.velocity,
                 desiredWheelSpeeds.frontRightMetersPerSecond
             )
-        val backLeftPID = blController.calculate(backLeftMotor.encoder.velocity, desiredWheelSpeeds.rearLeftMetersPerSecond)
-        val backRightPID = brController.calculate(backRightMotor.encoder.velocity, desiredWheelSpeeds.rearRightMetersPerSecond)
+        val backLeftPID = blController.calculate(
+            backLeftMotor.encoder.velocity,
+            desiredWheelSpeeds.rearLeftMetersPerSecond
+        )
+        val backRightPID = brController.calculate(
+            backRightMotor.encoder.velocity,
+            desiredWheelSpeeds.rearRightMetersPerSecond
+        )
 
         val frontLeftFF = feedForward.calculate(desiredWheelSpeeds.frontLeftMetersPerSecond)
         val frontRightFF = feedForward.calculate(desiredWheelSpeeds.frontRightMetersPerSecond)
         val backLeftFF = feedForward.calculate(desiredWheelSpeeds.rearLeftMetersPerSecond)
         val backRightFF = feedForward.calculate(desiredWheelSpeeds.rearRightMetersPerSecond)
 
-        frontLeftMotor.setVoltage(frontLeftPID)
-        frontRightMotor.setVoltage(frontRightPID)
-        backLeftMotor.setVoltage(backLeftPID)
-        backRightMotor.setVoltage(backRightPID)
+        frontLeftMotor.setVoltage(frontLeftPID + frontLeftFF)
+        frontRightMotor.setVoltage(frontRightPID + frontRightFF)
+        backLeftMotor.setVoltage(backLeftPID + backLeftFF)
+        backRightMotor.setVoltage(backRightPID + backRightFF)
 
         this.poseEstimator.update(ahrs.rotation2d, getPositions())
         lastTime = currTime
@@ -157,7 +174,7 @@ open class MecanumDrive(
                 ),
                 createSparkMax(
                     MecanumConstants.DRIVE_MOTOR_FR,
-                    false,
+                    true,
                     gearing = MecanumConstants.DRIVE_GEARING,
                     upr = MecanumConstants.DRIVE_UPR,
                     currentLimit = MecanumConstants.CURRENT_LIM
@@ -171,7 +188,7 @@ open class MecanumDrive(
                 ),
                 createSparkMax(
                     MecanumConstants.DRIVE_MOTOR_BR,
-                    false,
+                    true,
                     gearing = MecanumConstants.DRIVE_GEARING,
                     upr = MecanumConstants.DRIVE_UPR,
                     currentLimit = MecanumConstants.CURRENT_LIM

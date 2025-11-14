@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.util.Units
 import kotlin.math.PI
 
+// none of these units have any basis in physics. some gearing ratio got messed up in the 2025 switch, and it was just faster to guess and check units.
 object RobotConstants {
     const val RATE_LIMIT = 3.5
 
@@ -12,8 +13,8 @@ object RobotConstants {
     const val PDH_CAN = 1
 
     /** Controller Configurations */
-    const val ROT_RATE_LIMIT = 4.0 * PI
-    const val NEG_ROT_RATE_LIM = -8.0 * PI
+    const val ROT_RATE_LIMIT = 30.0 * PI
+    const val NEG_ROT_RATE_LIM = -60.0 * PI
     const val TRANSLATION_DEADBAND = .15
     const val ROTATION_DEADBAND = .15
 
@@ -21,9 +22,9 @@ object RobotConstants {
     const val ROBOT_WEIGHT = 55.0
 
     /** Drive configuration */
-    const val MAX_LINEAR_SPEED = 1.5
-    const val MAX_ROT_SPEED = PI / 2 // rad/s
-    const val MAX_ACCEL = 15.0
+    const val MAX_LINEAR_SPEED = 80.0
+    const val MAX_ROT_SPEED = 80 * PI / 2 // rad/s
+    const val MAX_ACCEL = 80.0
 
     val INITIAL_POSE = Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0))
 
