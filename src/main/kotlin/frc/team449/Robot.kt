@@ -20,7 +20,7 @@ class Robot {
 
     val driveController = CommandXboxController(0)
 
-    private val ahrs = AHRS(AHRS.NavXComType.kMXP_SPI)
+    val ahrs = AHRS(AHRS.NavXComType.kMXP_SPI)
 
     // Instantiate/declare PDP and other stuff here
 

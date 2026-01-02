@@ -59,7 +59,7 @@ open class MecanumDrive(
 
     private var lastTime = Timer.getFPGATimestamp()
 
-    private val kinematics =
+    val kinematics =
         MecanumDriveKinematics(
             frontLeftLocation,
             frontRightLocation,
@@ -142,7 +142,7 @@ open class MecanumDrive(
     /**
      * @return the position readings of the wheels bundled into one object (meters)
      */
-    private fun getPositions(): MecanumDriveWheelPositions =
+    fun getPositions(): MecanumDriveWheelPositions =
         MecanumDriveWheelPositions(
             frontLeftMotor.encoder.position,
             frontRightMotor.encoder.position,
