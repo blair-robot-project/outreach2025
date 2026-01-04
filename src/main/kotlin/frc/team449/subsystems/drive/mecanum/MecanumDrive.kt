@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.team449.RobotConstants
 import frc.team449.subsystems.drive.HolonomicDrive
-import frc.team449.system.encoder.NEOEncoder
 import frc.team449.system.motor.createSparkMax
 
 /**
