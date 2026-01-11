@@ -19,14 +19,14 @@ class Shooter : SubsystemBase() {
     init {
         shooterConfig.smartCurrentLimit(ShooterConstants.CURRENT_LIMIT)
         shooterConfig.idleMode(SparkBaseConfig.IdleMode.kCoast)
-        shooterConfig.inverted(true)
+        shooterConfig.inverted(false)
 
         shooter.configure(shooterConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters)
 
         feederConfig.smartCurrentLimit(ShooterConstants.CURRENT_LIMIT)
         feederConfig.idleMode(SparkBaseConfig.IdleMode.kCoast)
 
-        feederConfig.inverted(false)
+        feederConfig.inverted(true)
 
         feeder.configure(feederConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters)
     }

@@ -20,6 +20,6 @@ class Indexer : SubsystemBase() {
 
     fun runIndexer(): Command =
         runOnce {
-            motor.setVoltage(IndexerConstants.INDEXER_VOLTS)
+            motor.setVoltage(-IndexerConstants.INDEXER_VOLTS)
         }
 }
