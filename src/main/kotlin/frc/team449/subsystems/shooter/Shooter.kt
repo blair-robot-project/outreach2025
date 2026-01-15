@@ -6,7 +6,6 @@ import com.revrobotics.spark.SparkMax
 import com.revrobotics.spark.config.SparkBaseConfig
 import com.revrobotics.spark.config.SparkMaxConfig
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import edu.wpi.first.wpilibj2.command.WaitCommand
 
@@ -37,7 +36,7 @@ class Shooter : SubsystemBase() {
         }.andThen(WaitCommand(1.0))
             .andThen(
                 runOnce {
-                    feeder.setVoltage(ShooterConstants.SHOOTER_VOLT)
+                    feeder.setVoltage(ShooterConstants.FEEDER_VOLT)
                 }
             )
 
@@ -47,16 +46,13 @@ class Shooter : SubsystemBase() {
         }.andThen(WaitCommand(1.0))
             .andThen(
                 runOnce {
-                    feeder.setVoltage(-ShooterConstants.SHOOTER_VOLT)
+                    feeder.setVoltage(-ShooterConstants.FEEDER_VOLT)
                 }
             )
 
     fun stopShooter(): Command =
         runOnce {
             shooter.stopMotor()
-        }.andThen(
-            runOnce {
-                feeder.stopMotor()
-            }
-        )
+            feeder.stopMotor()
+        }
 }

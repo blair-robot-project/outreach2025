@@ -64,7 +64,6 @@ class RobotLoop : TimedRobot() {
         robot.field.robotPose = robot.drive.pose
 
         robot.field.getObject("bumpers").pose = robot.drive.pose
-
     }
 
     override fun autonomousInit() {
@@ -88,6 +87,7 @@ class RobotLoop : TimedRobot() {
         (robot.light.currentCommand ?: InstantCommand()).cancel()
 
         robot.drive.defaultCommand = robot.driveCommand
+        //robot.indexer.defaultCommand = robot.indexer.runIndexer()
 
         robot.indexer.runIndexer()
     }

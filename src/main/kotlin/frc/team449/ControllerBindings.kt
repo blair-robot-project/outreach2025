@@ -1,6 +1,7 @@
 package frc.team449
 
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.InstantCommand
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
@@ -33,7 +34,14 @@ class ControllerBindings(
 
     fun bindButtons() {
         evergreenBindings()
-        driveController.y().onTrue(robot.shooter.runShooter().alongWith(robot.indexer.runIndexer())).onFalse(robot.shooter.stopShooter())
+        driveController.y().onTrue(
+            robot.shooter.runShooter().alongWith(robot.indexer.runIndexer())
+        ).onFalse(
+            Commands.parallel(
+            robot.shooter.stopShooter(),
+            robot.indexer.stop()
+        )
+        )
         driveController.x().onTrue(robot.intake.runIntake()).onFalse(robot.intake.stopIntake())
     }
 }

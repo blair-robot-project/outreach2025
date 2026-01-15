@@ -8,6 +8,7 @@ object ShooterConstants {
     const val SHOOTER_GEARING = 1.0
 
     /**Shooter voltage**/
-    const val SHOOTER_VOLT = -8.0
+    const val SHOOTER_VOLT = -6.0
+    const val FEEDER_VOLT = -9.0
     const val CURRENT_LIMIT = 80
 }

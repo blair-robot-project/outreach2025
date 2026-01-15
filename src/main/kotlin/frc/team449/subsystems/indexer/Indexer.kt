@@ -22,4 +22,9 @@ class Indexer : SubsystemBase() {
         runOnce {
             motor.setVoltage(-IndexerConstants.INDEXER_VOLTS)
         }
+
+    fun stop(): Command =
+        runOnce {
+            motor.stopMotor()
+        }
 }
